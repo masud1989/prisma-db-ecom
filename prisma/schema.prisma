@@ -24,7 +24,7 @@ enum policy {
   Exchange
 }
 
-enum delStatus{
+enum delStatus {
   Processed
   Not_Delivered
   Delivered
