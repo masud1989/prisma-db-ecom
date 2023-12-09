@@ -1,0 +1,264 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum selectRemark {
+  Best
+  Better
+  Good
+  Average
+  Bad 
+  Very_Bad
+}
+
+enum policy {
+  Return
+  Exchange
+}
+
+enum delStatus{
+  Processed
+  Not_Delivered
+  Delivered
+}
+
+model users {
+  id BigInt @id @db.BigInt @default(autoincrement())
+  email String @db.VarChar(50) @unique
+  password String @db.VarChar(50)
+  otp String @db.VarChar(50) @default("0")
+
+  customer_profiles customer_profiles?
+  product_carts product_carts?
+  product_wishes product_wishes[]
+  invoices invoices[]
+  invoice_products invoice_products[]
+  
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @default(now()) @db.Timestamp(0) @updatedAt
+}
+
+model categories {
+  id BigInt @id @db.BigInt @default(autoincrement())
+  categoryName String @db.VarChar(50)
+  categoryImg String
+
+  products products[]
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @default(now()) @db.Timestamp(0) @updatedAt
+}
+
+model brands {
+  id BigInt @id @db.BigInt @default(autoincrement())
+  brandName String @db.VarChar(50)
+  brandImg String
+
+  products products[]
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @default(now()) @db.Timestamp(0) @updatedAt
+}
+
+model products {
+ id BigInt @id @db.BigInt @default(autoincrement())
+  title String @db.VarChar(50)
+  short_desc String @db.VarChar(100)
+  price String @db.VarChar(20)
+  discount Int @db.TinyInt
+  discount_price String @db.VarChar(50)
+  image String
+  stock Int @db.TinyInt
+  star Float @db.Double
+  remark selectRemark
+
+  product_wishes product_wishes []
+  product_sliders product_sliders ?
+  product_details product_details?
+  product_carts product_carts[]
+  product_reviews product_reviews[]
+  invoice_products invoice_products[]
+
+  category_id BigInt
+  categories categories @relation(fields: [category_id], references: [id], onDelete: Restrict, onUpdate: Cascade )
+
+  brand_id BigInt
+  brands brands @relation(fields: [brand_id], references: [id], onDelete: Restrict, onUpdate: Cascade )
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @default(now()) @db.Timestamp(0) @updatedAt
+}
+
+model customer_profiles {
+  id BigInt @id @db.BigInt @default(autoincrement())
+  cus_name String @db.VarChar(50)
+  cus_add String @db.VarChar(100)
+  cus_city String @db.VarChar(50)
+  cus_state String @db.VarChar(50)
+  cus_postcode String @db.VarChar(50)
+  cus_country String @db.VarChar(50)
+  cus_phone String @db.VarChar(50)
+  cus_fax String @db.VarChar(50)
+  ship_name String @db.VarChar(50)
+  ship_add String @db.VarChar(100)
+  ship_city String @db.VarChar(50)
+  ship_state String @db.VarChar(50)
+  ship_postcode String @db.VarChar(50)
+  ship_country String @db.VarChar(50)
+  ship_phone String @db.VarChar(50)
+  
+  user_id BigInt @unique
+  users users @relation(fields: [user_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  product_reviews product_reviews []
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @default(now()) @db.Timestamp(0) @updatedAt
+
+}
+
+model policies {
+  id BigInt @id @db.BigInt @default(autoincrement())
+  type policy
+  des String @db.LongText
+}
+
+
+model sslcommerz_accounts {
+  id BigInt @id @db.BigInt @default(autoincrement())
+  store_id String
+  store_password String
+  currency String @db.Char(50)
+  success_url String @db.Char(50)
+  fail_url String @db.Char(50)
+  cancel_url String @db.Char(50)
+  ipn_url String @db.Char(50)
+  init_url String @db.Char(50)
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @default(now()) @db.Timestamp(0) @updatedAt
+}
+
+model product_wishes {
+  id BigInt @id @db.BigInt @default(autoincrement())
+
+  product_id BigInt 
+  products products @relation(fields: [product_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  user_id BigInt 
+  users users @relation(fields: [user_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @default(now()) @db.Timestamp(0) @updatedAt
+}
+
+model product_sliders {
+  id BigInt @id @db.BigInt @default(autoincrement())
+  short_desc String @db.VarChar(100)
+  price String @db.VarChar(20)
+  image String
+
+  product_id BigInt @unique
+  products products @relation(fields: [product_id], references: [id], onDelete: Restrict, onUpdate: Cascade) 
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @default(now()) @db.Timestamp(0) @updatedAt
+}
+
+model product_details {
+  id BigInt @id @db.BigInt @default(autoincrement())
+  img1 String
+  img2 String
+  img3 String
+  img4 String
+  des String @db.LongText
+  color String @db.Char(50)
+  size String @db.Char(20)
+
+  product_id BigInt @unique
+  products products @relation(fields: [product_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @default(now()) @db.Timestamp(0) @updatedAt
+}
+
+model product_carts {
+  id BigInt @id @db.BigInt @default(autoincrement())
+
+  user_id BigInt @unique
+  users users @relation(fields: [user_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  product_id BigInt
+  products products @relation(fields: [product_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  color String @db.Char(50)
+  size String @db.Char(20)
+  qty String @db.Char(20)
+  price String @db.Char(20)
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @default(now()) @db.Timestamp(0) @updatedAt
+}
+
+model product_reviews {
+  id BigInt @id @db.BigInt @default(autoincrement())
+  description String @db.Char(50)
+  reting String @db.Char(50)
+
+  customer_id BigInt
+  customer_profiles customer_profiles @relation(fields: [customer_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  product_id BigInt 
+  products products @relation(fields: [product_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @default(now()) @db.Timestamp(0) @updatedAt
+}
+
+model invoices {
+  id BigInt @id @db.BigInt @default(autoincrement())
+  total String @db.Char(20)
+  vat String @db.Char(20)
+  payable String @db.Char(20)
+  cus_details String @db.Char(50)
+  ship_details String @db.Char(50)
+  tran_id String @db.Char(50)
+  val_id String @db.Char(50)
+  delivery_status delStatus
+  payment_status String @db.Char(20)
+
+  user_id BigInt 
+  users users @relation(fields: [user_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  invoice_products invoice_products[]
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @default(now()) @db.Timestamp(0) @updatedAt
+}
+
+model invoice_products {
+  id BigInt @id @db.BigInt @default(autoincrement())
+
+  invoice_id BigInt 
+  invoices invoices @relation(fields: [invoice_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  product_id BigInt 
+  products products @relation(fields: [product_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  user_id BigInt 
+  users users @relation(fields: [user_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  qty String @db.Char(20)
+  sale_price String @db.Char(20)
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @default(now()) @db.Timestamp(0) @updatedAt
+}
