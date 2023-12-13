@@ -1,6 +1,7 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -259,6 +260,17 @@ model invoice_products {
   qty String @db.Char(20)
   sale_price String @db.Char(20)
 
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @default(now()) @db.Timestamp(0) @updatedAt
+}
+
+model employees {
+  id BigInt @id @db.BigInt @default(autoincrement())
+  name String
+  designation String @db.Char(50)
+  city String @db.Char(50)
+  salary Int 
+ 
   createdAt DateTime @default(now()) @db.Timestamp(0)
   updatedAt DateTime @default(now()) @db.Timestamp(0) @updatedAt
 }
