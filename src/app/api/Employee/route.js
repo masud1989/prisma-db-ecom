@@ -131,7 +131,7 @@ export async function DELETE(req, res) {
 // }
 
 
-// pagination 
+// pagination/take/skip
 export async function GET() {
     try {
       const Prisma = new PrismaClient();
@@ -145,12 +145,10 @@ export async function GET() {
           }
         );
   
-      return NextResponse.json({
-        status: "success",
-        Total: result.length,
-        data: result,
-      });
-    } catch (error) {
+      return NextResponse.json({status: "success", Total: result.length, data: result });
+
+    } 
+    catch (error) {
       return NextResponse.json({ status: "fail", msg: error.toString() });
     }
   }
