@@ -103,24 +103,54 @@ export async function DELETE(req, res) {
 
 
 // Aggregate 
-export async function GET(){
-  try {
-    const Prisma = new PrismaClient()
+// export async function GET(){
+//   try {
+//     const Prisma = new PrismaClient()
 
-    const result = await Prisma.employees.aggregate({
+//     const result = await Prisma.employees.aggregate({
+      
+//       _avg: {
+//         salary: true,
+//       },
+//       where: {
+//         city: 'Dhaka',
+//       },
+//       orderBy: {
+//         id: 'asc',
+//       },
+//       take: 10,
+      
+//     })
 
-      _sum:{salary: true},
-      _max:{salary: true},
-      _min:{salary: true},
-      _avg:{salary: true},
-      where: {city: 'Dhaka'},
 
-    })
+//     return NextResponse.json({status: "success",  data: result });
+//   } 
+//   catch (error) {
+//     return NextResponse.json({ status: "fail", msg: error.toString() });
+//   }
+// }
 
 
-    return NextResponse.json({status: "success",  data: result });
-  } 
-  catch (error) {
-    return NextResponse.json({ status: "fail", msg: error.toString() });
+// pagination 
+export async function GET() {
+    try {
+      const Prisma = new PrismaClient();
+  
+      const result = await Prisma.employees.findMany(
+          {
+            select: {name:true, city:true, salary:true },
+            where : {city : 'Dhaka'},
+            skip: 3,
+            take: 5,
+          }
+        );
+  
+      return NextResponse.json({
+        status: "success",
+        Total: result.length,
+        data: result,
+      });
+    } catch (error) {
+      return NextResponse.json({ status: "fail", msg: error.toString() });
+    }
   }
-}
