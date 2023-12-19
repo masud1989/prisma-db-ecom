@@ -134,6 +134,7 @@ export async function DELETE(req, res) {
 // pagination/take/skip
 export async function GET() {
     try {
+      
       const Prisma = new PrismaClient();
   
       const result = await Prisma.employees.findMany(
